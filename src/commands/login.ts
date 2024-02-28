@@ -16,6 +16,7 @@ export const command = new Command("login")
   .description("log the CLI into Firebase")
   .option("--no-localhost", "login from a device without an accessible localhost")
   .option("--reauth", "force reauthentication even if already logged in")
+  .option("--whoami", "return the primary email address of the logged-in user")
   .action(async (options: any) => {
     if (options.nonInteractive) {
       throw new FirebaseError(
@@ -30,7 +31,12 @@ export const command = new Command("login")
     const tokens = options.tokens as Tokens | undefined;
 
     if (user && tokens && !options.reauth) {
-      logger.info("Already logged in as", clc.bold(user.email));
+      if (options.whoami) {
+        logger.info(user.email);
+      } else {
+        logger.info("Already logged in as", clc.bold(user.email));
+      }
+
       return user;
     }
 
